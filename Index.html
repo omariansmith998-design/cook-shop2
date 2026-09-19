@@ -97,7 +97,7 @@ const MASTER_PIN = "9999";
 function App() {
 const [currentShopId, setCurrentShopId] = useState('shop1');
 const [shops, setShops] = useState(() => {
-const saved = localStorage.getItem('yardvibes_shops_v6');
+const saved = localStorage.getItem('yardvibes_shops_v8');
 return saved ? JSON.parse(saved) : INITIAL_SHOPS;
 });
 const [cart, setCart] = useState([]);
@@ -106,11 +106,11 @@ const [deliveryAddress, setDeliveryAddress] = useState('');
 const [paymentMethod, setPaymentMethod] = useState('Cash');
 const [bankRef, setBankRef] = useState('');
 const [orders, setOrders] = useState(() => {
-const saved = localStorage.getItem('yardvibes_orders_v6');
+const saved = localStorage.getItem('yardvibes_orders_v8');
 return saved ? JSON.parse(saved) : [];
 });
 const [suggestions, setSuggestions] = useState(() => {
-const saved = localStorage.getItem('yardvibes_suggestions_v6');
+const saved = localStorage.getItem('yardvibes_suggestions_v8');
 return saved ? JSON.parse(saved) : [
 { id: 1, text: "Oxtail with Broad Beans", votes: 14 },
 { id: 2, text: "Curry Mutton Weekend Special", votes: 9 }
@@ -134,15 +134,15 @@ const activeShop = shops[currentShopId] || shops['shop1'];
 const t = activeShop.theme;
 
 useEffect(() => {
-localStorage.setItem('yardvibes_shops_v6', JSON.stringify(shops));
+localStorage.setItem('yardvibes_shops_v8', JSON.stringify(shops));
 }, [shops]);
 
 useEffect(() => {
-localStorage.setItem('yardvibes_orders_v6', JSON.stringify(orders));
+localStorage.setItem('yardvibes_orders_v8', JSON.stringify(orders));
 }, [orders]);
 
 useEffect(() => {
-localStorage.setItem('yardvibes_suggestions_v6', JSON.stringify(suggestions));
+localStorage.setItem('yardvibes_suggestions_v8', JSON.stringify(suggestions));
 }, [suggestions]);
 
 useEffect(() => {
@@ -202,7 +202,7 @@ setCart(cart.filter(item => item.cartId !== cartId));
 };
 
 const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
-const finalTotal = cartTotal + (fulfillment === 'delivery' ? activeShop.deliveryFee : 0);
+const finalTotal = cartTotal + (fulfillment === 'delivery' && activeShop.deliveryEnabled ? activeShop.deliveryFee : 0);
 
 const handleCheckoutWhatsApp = () => {
 if (cart.length === 0) return;
@@ -672,7 +672,6 @@ className={px-3 py-1 rounded-lg text-xs font-bold${activeShop.isOpen ? 'bg-emera
 </button>
 </div>
 
-{/* Admin Delivery Toggle */}
 <div className="flex justify-between items-center bg-slate-950 p-2.5 rounded-lg border border-slate-800">
 <span className="text-xs font-medium">Delivery Option</span>
 <button
@@ -743,8 +742,7 @@ className="text-red-400 font-bold px-1">✕</button>
 );
 }
 
-const container = document.getElementById('root');
-const root = ReactDOM.createRoot(container);
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
 </body>
